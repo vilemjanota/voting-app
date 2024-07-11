@@ -1,0 +1,14 @@
+.voted {
+    background-color: blue;
+}
+
+.notVoted {
+    background-color: grey;
+}
+
+.options button {
+    border-radius: 10px;
+    color: white;
+    padding: 80px 40px;
+}
+
