@@ -6,9 +6,7 @@ const app = express()
 const server = http.createServer(app)
 const wss = new WebSocket.Server({ server })
 
-const sessions = {
-  // sessionCode: { users: [ws1, ws2, ws3] }
-}
+const sessions = {}
 
 wss.on('connection', (ws) => {
   ws.on('message', (message) => {
@@ -19,7 +17,7 @@ wss.on('connection', (ws) => {
         console.log('Session already exists')
       }
       else {
-        sessions[sessionCode] = { users: [ws] }
+        sessions[sessionCode] = { users: [ws], option1: data.option1, option2: data.option2}
         console.log('Session created')
       }
     } 
@@ -29,7 +27,9 @@ wss.on('connection', (ws) => {
         console.log('Session does not exist')
       }
       else {
+        console.log('User joined session')
         sessions[sessionCode].users.push(ws)
+        ws.send(JSON.stringify({ type: 'join', data: { option1: sessions[sessionCode].option1, option2: sessions[sessionCode].option2 }}))
       }
     }
 

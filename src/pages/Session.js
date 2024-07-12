@@ -5,30 +5,30 @@ import { useState, useEffect } from 'react'
 import { useWebSocket } from '../WebSocketContext'
 
 function Session() {
-    const ws = useWebSocket()
+    const { getWebSocket, closeWebSocket } = useWebSocket();
+    const ws = getWebSocket();
     const location = useLocation()
     const { sessionCode } = location.state || {}
-
+    const [options, setOptions] = useState({ option1: '', option2: '' })
 
     useEffect(() => {
-      ws.onmessage = (event) => {
-        console.log('event' + event.data)
-        const { type, data } = JSON.parse(event.data)
-        if (type === 'vote') {
-            document.querySelector('.vote').innerText = data
+        ws.onmessage = (event) => {
+            const { type, data } = JSON.parse(event.data)
+            if (type === 'vote') {
+                document.querySelector('.vote').innerText = data
+            }
+            if (type === 'join') {
+                setOptions(data)
+            }
         }
-        else {
-            document.querySelector('.vote').innerText = 'data not received'
-        }
-      }
-    }, [])
+    }, [ws])
 
     return (
         <div className="Session">
             <h1>Vote for your favorite option!</h1>
             <h4>Session code: {sessionCode}</h4>
             <p className='vote'>vote:</p>
-            <VotingWS sessionCode={sessionCode} />
+            <VotingWS ws={ws} sessionCode={sessionCode} options={options} />
         </div>
     )
 }

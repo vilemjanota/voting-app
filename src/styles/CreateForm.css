@@ -1,0 +1,9 @@
+.form-container {
+    display: flex;
+    flex-direction: column;   
+    margin: 2vw;
+}
+
+.form-input {
+    margin: 10px;
+}

@@ -2,18 +2,29 @@ import '../styles/Voting.css'
 import { useState, useEffect } from 'react'
 import { useWebSocket } from '../WebSocketContext'
 
-function VotingWS({ sessionCode }) {
-  const ws = useWebSocket()
-
+function VotingWS({ ws, sessionCode, options }) {
     const sendVote = (vote) => {
-      ws.send(JSON.stringify({ type: 'vote', sessionCode, data: vote }))
+        ws.send(JSON.stringify({ type: 'vote', sessionCode, data: vote }))
     }
+    useEffect(() => {
+
+        const handleOpen = () => {
+            ws.send(JSON.stringify({ type: 'join', sessionCode }));
+        };
+
+        // Check if WebSocket is already open; if not, listen for the open event
+        if (ws.readyState === WebSocket.OPEN) {
+            handleOpen();
+        } else {
+            ws.addEventListener('open', handleOpen);
+        }
+    }, [ws])
 
     return (
         <div>
             <div className='options'>
-                <button onClick={() => sendVote('Option1')}>Option 1</button>
-                <button onClick={() => sendVote('Option2')}>Option 2</button>
+                <button className='option1' onClick={() => sendVote('Option1')}>{options.option1}</button>
+                <button className='option2' onClick={() => sendVote('Option2')}>{options.option2}</button>
             </div>
         </div>
     )

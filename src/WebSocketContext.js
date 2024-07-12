@@ -1,31 +1,24 @@
-import React, { createContext, useContext, useEffect, useState } from 'react'
+import React, { createContext, useContext, useEffect } from 'react';
+import { getWebSocket, closeWebSocket } from './WebSocketManager';
 
-// Create a context
-const WebSocketContext = createContext(null)
+const WebSocketContext = createContext(null);
 
-// Export a hook to use the WebSocket context
-export const useWebSocket = () => useContext(WebSocketContext)
+export const useWebSocket = () => useContext(WebSocketContext);
 
-// WebSocket Provider component
 export const WebSocketProvider = ({ children }) => {
-    const [webSocket, setWebSocket] = useState(null)
+  useEffect(() => {
+    // Initialize WebSocket connection
+    const ws = getWebSocket();
 
-    useEffect(() => {
-        // Initialize WebSocket connection
-        const ws = new WebSocket('ws://localhost:3000')
-        setWebSocket(ws)
+    // Cleanup on unmount
+    return () => {
+      closeWebSocket();
+    };
+  }, []);
 
-        // Cleanup on unmount
-        return () => {
-            if (ws) {
-                ws.close()
-            }
-        }
-    }, [])
-
-    return (
-        <WebSocketContext.Provider value={webSocket}>
-            {children}
-        </WebSocketContext.Provider>
-    )
-}
+  return (
+    <WebSocketContext.Provider value={{ getWebSocket, closeWebSocket }}>
+      {children}
+    </WebSocketContext.Provider>
+  );
+};
