@@ -20,6 +20,11 @@ Once a user obtains a code they can input it to join an existing session.
 
 In the project directory, you can run:
 
+### `npm install`
+
+Installs the project dependencies.\
+Allows you to use the following scripts.
+
 ### `npm start`
 
 Runs the app in the development mode.\
